@@ -1,5 +1,5 @@
 // PA3
-// Authors: Sadie Henry, Melinda Ryan 
+// Authors: Sadie Henry, Gabriella Fontani 
 // Date: 10/17/2014
 // Class: CS200
 
