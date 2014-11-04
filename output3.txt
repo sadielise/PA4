@@ -1,0 +1,41 @@
+WORDS
+bird
+cat
+china
+clothing
+cruel
+dog
+due
+elephant
+endangered
+enough
+fighting
+for
+gazelle
+growing
+in
+is
+isn't
+its
+jon
+life
+of
+on
+panda
+popularity
+siberian
+skin
+stewart
+the
+tiger
+to
+when
+
+  At depth 3
+JON in pages: example2.txt: 1.10
+  At depth 5
+tiger in pages: example2.txt: 1.62, data3.txt: 0.41
+  At depth 2
+dog in pages: simple3.txt: 2.20
+  At depth 10
+hippo not found

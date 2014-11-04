@@ -1,0 +1,7 @@
+simple3.txt
+example2.txt
+data3.txt
+*EOFs*
+Sadie
+qewpoifds
+dog
