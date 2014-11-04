@@ -8,7 +8,7 @@
  * Based on code from the Carrano and Pritchard
  * text (pp. 616-619). Modified generics for Term class,
  * added instance variable to track the 
- * depth of an item during retrieval
+ * depth of an item during retrieval 
  * 
  */
 
