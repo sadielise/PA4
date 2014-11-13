@@ -1,6 +1,6 @@
-// PA3
-// Authors: Sadie Henry, Melinda Ryan 
-// Date: 10/17/2014
+// PA4
+// Authors: Sadie Henry, Gabriella Fontani
+// Date: 11/13/2014
 // Class: CS200
 
 import java.io.File;
@@ -8,7 +8,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class PA3 {
+public class PA4 {
 
 	public static void main(String[] args) 
 	{

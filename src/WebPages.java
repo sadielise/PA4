@@ -157,7 +157,53 @@ public class WebPages
 		
 	}
 
-
+	// compute cosine similarity
+	public void bestPages(String query){
+		
+		// array list for individual terms in a query
+		ArrayList<String> queryList = new ArrayList<String>();
+		
+		// scanner to ready query
+		Scanner scan = new Scanner(query);
+		
+		// read each term of the query into the ArrayList
+		while(scan.hasNext()){
+			String s = scan.next();
+			queryList.add(s);
+		}
+		
+		// sort arrayList
+		for(int i = 0; i < queryList.size()-1; i++){
+			
+			// if the item is greater than the one after it, swap
+			if(queryList.get(i).compareTo(queryList.get(i+1)) > 0){
+				String temp = queryList.get(i);
+				queryList.set(i, queryList.get(i+1));
+				queryList.set(i+1, temp);
+			}
+		}
+		
+		/* array that supports mapping b/w positions in the component
+		   arrays and which documents are being referenced */
+		String[] docs = new String[pageCount];
+		
+		// array that keeps the numerators
+		Double[] common = new Double[pageCount];
+		
+		// array that keeps the first summation in the denominators
+		Double[] docSpecific = new Double[pageCount];
+		
+		// variable for second summation in the denominator (scalar)
+		Double secondSum;
+		
+		
+		
+		
+		
+		
+	}
+	
+	
 
 
 
