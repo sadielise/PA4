@@ -1,8 +1,13 @@
 
 public class HashTable implements TermIndex{
 	private int size;
+	Term[] termTable;
 	
 	
+	public void HashTable(int sizeOfArray){
+		termTable = new Term[sizeOfArray];
+		size = 0;
+	}
 	public void add(String filename, String newWord){
 		
 	}
