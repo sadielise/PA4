@@ -2,15 +2,6 @@
 public class HashTable implements TermIndex{
 	//size keeps track of how many terms are in the hash table
 	private int size;
-<<<<<<< HEAD
-	Term[] termTable;
-	
-	
-	public void HashTable(int sizeOfArray){
-		termTable = new Term[sizeOfArray];
-		size = 0;
-	}
-=======
 	//termTable is the hash table where terms are stored
 	Term[] termTable;
 	//hash size is the size of the array 
@@ -24,7 +15,6 @@ public class HashTable implements TermIndex{
 	}
 	//adds a term to the hash table
 	//expands size of table and rehashes when 80% full
->>>>>>> origin/work-on-hash-table
 	public void add(String filename, String newWord){
 		int hashCode = hashCode(newWord);
 
