@@ -4,12 +4,17 @@ public class HashTable implements TermIndex{
 	private int size;
 
 	//termTable is the hash table where terms are stored
-	Term[] termTable;
+	private Term[] termTable;
 
 	//hash size is the size of the array 
 	private int hashSize;
 
-	//constructor creates termTable to be the correct size
+	/**
+	 * constructor creates termTable to be the correct size
+	 * set the size to 0 because no terms have been added
+	 * set hashSize to hashSize
+	 * @param hashSize the size that the hash table should be
+	 */
 	public HashTable(int hashSize){
 		termTable = new Term[hashSize];
 		size = 0;
@@ -17,8 +22,12 @@ public class HashTable implements TermIndex{
 	}
 
 
-	//adds a term to the hash table
-	//expands size of table and rehashes when 80% full
+	/**
+	 * adds a term to the hash table
+	 * expands size of table and rehashes when 80% full
+	 * @param filename the file that the word to be added comes from
+	 * @param newWord the word to be added to the hashTable
+	 */
 	public void add(String filename, String newWord){
 		//check if the hash table is 80% full
 		if(((double)size/(double)hashSize) >=.8){
@@ -65,6 +74,11 @@ public class HashTable implements TermIndex{
 		}
 	}
 
+	/**
+	 * increases the size of the hash table and 
+	 * re-adds all of the terms according to their
+	 * new hash code for the new table size
+	 */
 	private void reHash(){
 		//if the hash size is getting full make a new table
 		hashSize = (2*hashSize) +1;
@@ -97,17 +111,48 @@ public class HashTable implements TermIndex{
 		termTable = newTable;
 	}
 
-	//getter method for the size
+	
+	/**
+	 * getter method for the size
+	 * @return how may terms are in the hash table
+	 */
 	public int size(){
 		return this.size;
 	}
 
-
-	public void delete(String word){
-
+	/**
+	 * getter method for hashSize
+	 * @return the size of the array
+	 */
+	public int hashSize(){
+		return this.hashSize();
 	}
 
-	//returns the term if found and null if not found
+	/**
+	 * delete the word from the hash table
+	 * if the word is not in the hash table throw an exception
+	 * @param word the word to be deleted from the hashTable
+	 */
+	public void delete(String word){
+		int look = find(word);
+		//the word was found
+		if(look >= 0){
+			Term reservedTerm = new Term("RESERVED");
+			termTable[look] = reservedTerm;
+			this.size--;
+		}
+		//otherwise the word was not found and cannot be deleted
+		else{
+			throw new HashTableException("Deletion unsuccessful.  Word not found.");
+		}
+	}
+
+	/**
+	 * returns the term if found and null if not found(non-Javadoc)
+	 * @see TermIndex#get(java.lang.String, java.lang.Boolean)
+	 * @param word the name of the term to retrieve
+	 * @param printP ??????
+	 */
 	public Term get(String word, Boolean printP){
 		int position = this.find(word);
 		if(position>=0){
@@ -119,8 +164,10 @@ public class HashTable implements TermIndex{
 
 	}
 
-	//finds the word and returns the position where the word is located
-	//returns -1 if the word was not found
+	/**
+	 * @param word the name of the Term to be found
+	 * @return -1 if the word was not found or the position where the word is located
+	 */
 	private int find(String word){
 		int positionsChecked = 0;
 		//compute the hash code
@@ -144,10 +191,20 @@ public class HashTable implements TermIndex{
 		return -1;
 	}
 
+	/**
+	 * @param position
+	 * @return what is in the hashTable at position
+	 */
 	public Term get(int position){
 		return termTable[position];
 	}
 
+	
+	/**
+	 * calculates the hash code and index for a specified word
+	 * @param word
+	 * @return the index where the Term should be inserted
+	 */
 	public int hashCode(String word){
 		int intCode = Math.abs(word.toLowerCase().hashCode());
 		intCode = intCode%hashSize;
@@ -155,31 +212,54 @@ public class HashTable implements TermIndex{
 	}
 
 
-	//testing!!
+	/**
+	 * Testing the methods
+	 * @param args
+	 */
 	public static void main(String[] args){
 		HashTable testing = new HashTable(5);
+		//test add
 		testing.add("docs", "newWord");
 		testing.add("doc", "newWord");
 		testing.add("document", "word");
 		testing.add("doc", "words");
 		testing.add("doc", "Gabriella");
 		testing.add("d", "g");
-		
+
+		//test get
 		Term test = testing.get("Gabriella", false);
 		if(test!=null) System.out.println("Testing get: " + test.getName());
+
 		
+		//print terms to test iterator
 		String outputString = "";
-		if(testing.size() == 0)
-			System.out.println("Error: Empty List");
-		else
+		HashTableIterator itr = new HashTableIterator(testing);
+		while(itr.hasNext())
 		{
-			HashTableIterator itr = new HashTableIterator(testing);
-			while(itr.hasNext())
-			{
-				outputString += ((itr.next()).getName() + "\n");
-			}	
-			System.out.println(outputString);
+			outputString += ((itr.next()).getName() + "\n");
+		}	
+		System.out.println(outputString);
+		
+		//test delete
+		testing.delete("Gabriella");
+		testing.delete("word");
+		HashTableIterator itr2 = new HashTableIterator(testing);
+		outputString = "";
+		while(itr2.hasNext())
+		{
+			outputString += ((itr2.next()).getName() + "\n");
 		}
+		System.out.println(outputString);
+		testing.add("doc", "Gabriella");
+		
+		HashTableIterator itr3 = new HashTableIterator(testing);
+		outputString = "";
+		while(itr3.hasNext())
+		{
+			outputString += ((itr3.next()).getName() + "\n");
+		}
+		System.out.println(outputString);
+
 	}
 
 }

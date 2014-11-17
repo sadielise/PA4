@@ -127,6 +127,16 @@ public class WebPages
 		
 		return TF * Math.log(D / DF);
 	}
+	
+	
+	/**
+	 * remove word from the hash table
+	 * @param word the word that needs to be removed from the hash table
+	 */
+	public void pruneStopWords(String word) {
+		termIndex.delete(word);
+		
+	}
 
 	//whichPages method
 	public String[] whichPages(String word){
