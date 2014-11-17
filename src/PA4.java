@@ -20,6 +20,8 @@ public class PA4 {
 			int tempInt = scan.nextInt();
 			//initialize WebPages with the int
 			WebPages pages = new WebPages(tempInt);
+			//clear scanner
+			scan.nextLine();
 			
 			//read in the files to be added
 			String tempString = scan.nextLine();
@@ -41,7 +43,11 @@ public class PA4 {
 				tempString = scan.nextLine();
 			}
 			
-			//best pages!!
+			//print the terms
+			pages.printTerms();
+			
+			
+ 			//best pages!!
 			String[] docs;
 
 			while(scan.hasNext()){

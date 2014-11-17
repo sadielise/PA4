@@ -1,0 +1,8 @@
+WORDS
+jon
+tiger
+cat
+coati
+
+[dog jon ] in simple4b.txt: 0.61
+[cat coati ] in simple4c.txt: 0.71
