@@ -16,9 +16,15 @@ public class HashTable implements TermIndex{
 	//adds a term to the hash table
 	//expands size of table and rehashes when 80% full
 	public void add(String filename, String newWord){
+		//check if the hash table is 80% full
+		if(size/hashSize >0.8){
+			//if the hash size is getting full make a new 
+		}
 		int hashCode = hashCode(newWord);	
 		
 		
+		
+		this.size++;
 	}
 	public int size(){
 		return this.size;
