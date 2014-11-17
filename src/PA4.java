@@ -52,9 +52,9 @@ public class PA4 {
 			System.out.println("Error: " + e);
 			System.exit(0);
 		}
-
+		int hashSize = 0;
 		//create the WebPages object
-		WebPages webPages = new WebPages();
+		WebPages webPages = new WebPages(hashSize);
 
 		//add the new pages
 		for(int i = 0; i < fileNames.size(); i++){

@@ -1,6 +1,6 @@
-// PA3
+// PA4
 // Authors: Sadie Henry, Gabriella Fontani 
-// Date: 10/17/2014
+// Date: 11/19/2014
 // Class: CS200
 
 import java.io.File;
@@ -11,15 +11,15 @@ import java.util.Scanner;
 public class WebPages 
 {
 	//Instance variable for binary search tree of Terms
-	private BST termIndex;
+	private HashTable termIndex;
 	
 	//instance variable for the number of pages read in
 	private int pageCount;
 
 	//initializes a new index, a binary search tree of Term
-	public WebPages()
+	public WebPages(int hashSize)
 	{
-		termIndex = new BST();
+		termIndex = new HashTable(hashSize);
 	}
 
 	//reads in the page in filename, divides it into words as before 
@@ -89,7 +89,7 @@ public class WebPages
 			return "Error: Empty List";
 		else
 		{
-			BSTIterator itr = new BSTIterator(termIndex);
+			HashTableIterator itr = new HashTableIterator(termIndex);
 			while(itr.hasNext())
 			{
 				outputString += ((itr.next()).getName() + "\n");

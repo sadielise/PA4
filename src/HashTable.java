@@ -211,6 +211,20 @@ public class HashTable implements TermIndex{
 		return intCode;
 	}
 
+	/**
+	 * @param other
+	 * @return true if other is in the hash table, false if it is not
+	 */
+	public boolean contains(Object other) 
+	{
+		if(other instanceof Term)
+		{
+			Term otherTerm = (Term) other;
+			if(this.find(otherTerm.getName())!=-1)
+				return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Testing the methods
