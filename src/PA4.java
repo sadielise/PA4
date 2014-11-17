@@ -6,99 +6,60 @@
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class PA4 {
 
-	public static void main(String[] args) 
-	{
-		//arraylist for the file names
-		ArrayList<String> fileNames = new ArrayList<String>();
-		//arraylist for words on which you should run whichPages
-		ArrayList<String> whichPagesWords = new ArrayList<String>();
+	public static void main(String[] args){
 
-		try{
-			//Read in the file
-			Scanner scanFile = new Scanner(new File(args[0]));
+		try {
+			Scanner scan = new Scanner(new File(args[0]));
 
-			//tell the scanner to scan file names until the flag
-			while(true){
+			//scan in the size of the hash table
+			int tempInt = scan.nextInt();
+			//initialize WebPages with the int
+			WebPages pages = new WebPages(tempInt);
+			
+			//read in the files to be added
+			String tempString = scan.nextLine();
+			//while there are more files to be read in
+			while(!tempString.equals("*EOFs*")){
+				//add the page
+				pages.addPage(tempString);
+				//get the name of the next page from the scanner
+				tempString = scan.nextLine();
+			}
 
-				//scan in the line
-				String s = scanFile.nextLine();
+			//remove the stop words
+			tempString = scan.nextLine();
+			//while there are more stop words to prune
+			while(!tempString.equals("*STOPs*")){
+				//prune the stop word
+				pages.pruneStopWords(tempString);
+				//get the next word to be pruned
+				tempString = scan.nextLine();
+			}
+			
+			//best pages!!
+			String[] docs;
 
-				if(s.equals("*EOFs*")){
-					break;
+			while(scan.hasNext()){
+				String word = scan.nextLine();
+				docs = pages.whichPages(word.toLowerCase());
+				if(docs==null){
+					System.out.println(word + " not found");
 				}
-
 				else{
-					fileNames.add(s);
+					String documents =  Arrays.toString(docs);
+					System.out.println(word + " in pages: " +documents.substring(1, documents.length()-1));
 				}
+
 			}
-
-			//eat the extra newline
-			//scanFile.nextLine();
-
-			//read in the words for whichPages
-			while(scanFile.hasNext()){
-				String s = scanFile.nextLine();                        
-				whichPagesWords.add(s);
-			}	
-			
-			scanFile.close();
-		}
-
-		catch(Exception e){
+			scan.close();
+		} catch (Exception e) {
 			System.out.println("Error: " + e);
-			System.exit(0);
 		}
-		int hashSize = 0;
-		//create the WebPages object
-		WebPages webPages = new WebPages(hashSize);
-
-		//add the new pages
-		for(int i = 0; i < fileNames.size(); i++){
-			webPages.addPage(fileNames.get(i));
-		}
-
-		//print terms
-		webPages.printTerms();
-
-		//run whichPages method
-		for(int i = 0; i < whichPagesWords.size(); i++){
-			
-			//String array of pages in which the word occurs
-			String[] array = webPages.whichPages(whichPagesWords.get(i).toLowerCase());
 		
-			//String to be printed for each whichPages word
-			String s = whichPagesWords.get(i);
-			
-			//print the depth
-			webPages.printDepth(s);
-
-			//if the word isn't found, return word not found
-			if(array == null){
-				s += " not found";
-			}
-
-			//otherwise, return the word and the pages it occurs on + the TFIDF for that page
-			else{
-				
-				//String to print
-				s += " in pages: ";
-				double d;
-				DecimalFormat df = new DecimalFormat("0.00");
-				
-				for(int j = 0; j < array.length-1; j++){
-					d = webPages.TFIDF(array[j], whichPagesWords.get(i).toLowerCase());
-					s += array[j] + ": " + df.format(d) + ", ";
-				}
-
-				d = webPages.TFIDF(array[array.length-1], whichPagesWords.get(i).toLowerCase());
-				s += array[array.length-1] + ": " + df.format(d);
-			}
-			
-			System.out.println(s);
-		}
 	}
 }
