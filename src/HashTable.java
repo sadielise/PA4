@@ -16,10 +16,7 @@ public class HashTable implements TermIndex{
 	//adds a term to the hash table
 	//expands size of table and rehashes when 80% full
 	public void add(String filename, String newWord){
-		int hashCode = hashCode(newWord);
-
-		
-		
+		int hashCode = hashCode(newWord);	
 		
 		
 	}
@@ -32,6 +29,10 @@ public class HashTable implements TermIndex{
 	public Term get(String word, Boolean printP){
 		Term temp = new Term(word);
 		return temp;
+	}
+	
+	public Term get(int position){
+		return termTable[position];
 	}
 	
 	public int hashCode(String word){

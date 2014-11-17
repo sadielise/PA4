@@ -2,7 +2,7 @@ import java.util.Iterator;
 
 public class HashTableIterator implements Iterator<Term>{
 	
-	private TermIndex hTable;
+	private HashTable hTable;
 	private int position = 0;
 	
 	public HashTableIterator(HashTable hTable){
@@ -18,15 +18,16 @@ public class HashTableIterator implements Iterator<Term>{
 	public Term next() {
 
 		if(hasNext()){
-			// return term at position++
+			position++;
+			return hTable.get(position);
 		}
 		else{
-			// throw exception
+			throw new HashTableException("No terms available");
 		}
 	}
 
 	public void remove() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	
