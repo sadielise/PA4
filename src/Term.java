@@ -28,7 +28,7 @@ public class Term
 	public Term(String name){
 		
 		//set name to lower case
-		this.name = name.toLowerCase();
+		this.name = name;
 		
 		//initialize the docFrequency to 0
 		docFrequency = 0;
