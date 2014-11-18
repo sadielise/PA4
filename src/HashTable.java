@@ -225,7 +225,7 @@ public class HashTable implements TermIndex{
 		if(other instanceof Term)
 		{
 			Term otherTerm = (Term) other;
-			if(this.find(otherTerm.getName())!=-1)
+			if(this.find(otherTerm.getName()) >=0)
 				return true;
 		}
 		return false;
@@ -278,6 +278,12 @@ public class HashTable implements TermIndex{
 			outputString += ((itr3.next()).getName() + "\n");
 		}
 		System.out.println(outputString);
+		
+		Term tempTerm = new Term("gas");
+		boolean testcontain = testing.contains(tempTerm);
+		if(testcontain == true){
+			System.out.println("true");
+		}
 
 	}
 
