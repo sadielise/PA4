@@ -37,6 +37,8 @@ public class HashTable implements TermIndex{
 		//add the new term to the termTable
 		//compute the hash code
 		int hashCode = hashCode(newWord);	
+		//variable to keep track of probing
+		int probe = hashCode;
 
 		//instance variables to assist in adding
 		boolean added = false;
@@ -55,17 +57,17 @@ public class HashTable implements TermIndex{
 			//while the word has not been added
 			while(!added){			
 				//if the space is open
-				if(termTable[hashCode]==null || termTable[hashCode].getName().equals("RESERVED")){
+				if(termTable[probe]==null || termTable[probe].getName().equals("RESERVED")){
 					Term tempTerm = new Term(newWord);
 					tempTerm.incFrequency(filename);
-					termTable[hashCode] = tempTerm;
+					termTable[probe] = tempTerm;
 					added = true;
 				}
 
 				//if the location is full and the word has not been added already, do quadratic probing
 				else{
 					counter++;
-					hashCode = (hashCode + (int)Math.pow(counter, 2))%hashSize;
+					probe = (hashCode + (int)Math.pow(counter, 2))%hashSize;
 				}//end else
 			}//end while
 
@@ -84,6 +86,7 @@ public class HashTable implements TermIndex{
 		hashSize = (2*hashSize) +1;
 		Term[] newTable = new Term[hashSize];
 		int hashCode = 0;
+		int probe = 0;
 
 		//re-add all of the terms
 		for(int i = 0; i < termTable.length; i++){
@@ -91,19 +94,20 @@ public class HashTable implements TermIndex{
 			if(termTable[i]!=null && !termTable[i].getName().equals("RESERVED")){
 				//compute the hash code
 				hashCode = hashCode(termTable[i].getName());
+				probe = hashCode;
 				//add the word
 				boolean added = false;
 				int counter = 0;
 				//while the word has not been added
 				while(!added){
 					//if the space is open
-					if(newTable[hashCode] == null || newTable[hashCode].getName().equals("RESERVED")){
-						newTable[hashCode] = termTable[i];
+					if(newTable[probe] == null || newTable[probe].getName().equals("RESERVED")){
+						newTable[probe] = termTable[i];
 						added = true;
 					}
 					else{
 						counter++;
-						hashCode = (hashCode + (int)Math.pow(counter, 2))%hashSize;
+						probe = (hashCode + (int)Math.pow(counter, 2))%hashSize;
 					}//end else
 				}//end while
 			}//end if
@@ -172,19 +176,20 @@ public class HashTable implements TermIndex{
 		int positionsChecked = 0;
 		//compute the hash code
 		int hashCode = hashCode(word);
+		int probe = hashCode;
 
 		while(positionsChecked<hashSize){
 			//if the term is found return the location in the array 
-			if(termTable[hashCode] ==null){
+			if(termTable[probe] ==null){
 				//do nothing, the word has not been found
 			}
-			else if(termTable[hashCode].getName().equals(word)){
-				return hashCode;
+			else if(termTable[probe].getName().equals(word)){
+				return probe;
 
 			}
 			//otherwise do quadratic probing
 			positionsChecked++;
-			hashCode = (hashCode + (int)Math.pow(positionsChecked, 2))%hashSize;
+			probe = (hashCode + (int)Math.pow(positionsChecked, 2))%hashSize;
 		}
 
 		//if the code gets to here then the word  was not found
