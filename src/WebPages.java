@@ -278,16 +278,13 @@ public class WebPages
 		Double queryWeights = 0.0;
 		
 		// create iterator
-		HashTableIterator iterator = new HashTableIterator(termIndex);
-
-		// counter for iteration
-		int counter = 0;
+		HashTableIterator iterator = new HashTableIterator(termIndex);		
 		
 		// traverse over the term index
 		while(iterator.hasNext()){
 
 			// get temp term
-			Term temp = termIndex.get(counter);
+			Term temp = iterator.next();
 
 			// variable for wiq
 			double wiq = 0;
@@ -328,9 +325,12 @@ public class WebPages
 					// add to value in common array in position for doc k
 					common[index] += commonVal;
 				}
+				
+				else{
+					common[index] += 0.0;
+				}
 			}
 			
-			counter++;
 		}
 
 		// variables for highest sim value
