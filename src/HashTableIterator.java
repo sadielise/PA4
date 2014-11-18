@@ -1,4 +1,4 @@
-import java.util.Iterator;
+ort java.util.Iterator;
 
 public class HashTableIterator implements Iterator<Term>{
 

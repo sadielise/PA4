@@ -276,12 +276,18 @@ public class WebPages
 
 		// variable for second summation in the denominator (scalar)
 		Double queryWeights = 0.0;
+		
+		// create iterator
+		HashTableIterator iterator = new HashTableIterator(termIndex);
 
+		// counter for iteration
+		int counter = 0;
+		
 		// traverse over the term index
-		for(int j = 0; j < termIndex.size(); j++){
+		while(iterator.hasNext()){
 
 			// get temp term
-			Term temp = termIndex.get(j);
+			Term temp = termIndex.get(counter);
 
 			// variable for wiq
 			double wiq = 0;
@@ -323,6 +329,8 @@ public class WebPages
 					common[index] += commonVal;
 				}
 			}
+			
+			counter++;
 		}
 
 		// variables for highest sim value
