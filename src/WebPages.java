@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Scanner;
 
@@ -149,10 +150,10 @@ public class WebPages
 		// get the number of docs that contain word
 		int dfi = temp.getDocFrequency();
 		
-		double pc = (double)pageCount;
+		double pc = pageCount;
 		double df = (double)dfi;
 
-		return (0.5)*(1.0 + Math.log(pc/df));
+		return .5*(1 + Math.log(pc/df));
 	}
 
 	private String[] sortArray(String[] array){
@@ -173,29 +174,20 @@ public class WebPages
 		return array;
 	}
 
-	private void setZero(double[] array){
-
-		for(int i = 0; i < array.length; i++){
-			array[i] = 0.0;
+	private String listToString(ArrayList<String> array){
+		String retVal = "[";
+		for(int i = 0; i < array.size(); i++){
+			retVal += array.get(i) + " ";
 		}
+		retVal += "]";
+		return retVal;
 	}
 	
-	private static String[] stringToArray(ArrayList<String> list){
-		String[] retArray = new String[list.size()];
-		for(int i = 0; i < list.size(); i++){
-			retArray[i] = list.get(i);
-		}
-		return retArray;
-	}
+	private void setZero(ArrayList<Double> array){
 
-	private int indexOfArray(String[] array, String word){
-		int index = 0;
-		for(index = 0; index < array.length; index++){
-			if(array[index].equals(word))
-				return index;
+		for(int i = 0; i < pageCount; i++){
+			array.add(0.0);
 		}
-		
-		return -1;
 	}
 
 	/**
@@ -254,123 +246,108 @@ public class WebPages
 		scan.close();
 
 		// sort query list
-		String[] queryListArray = new String[queryList.size()];
-		queryListArray = stringToArray(queryList);
-		queryListArray = sortArray(queryListArray);
+		Collections.sort(queryList);
 
 		/* array that supports mapping b/w positions in the component
 		   arrays and which documents are being referenced */
-		String[] docs = new String[fileNames.size()];
-		docs = stringToArray(fileNames);
-		docs = sortArray(docs);
+		ArrayList<String> docs = fileNames;
+		Collections.sort(docs);
 
 		// array that keeps the numerators
-		double[] common = new double[pageCount];
+		ArrayList<Double> common = new ArrayList<Double>();
 		// set all positions to 0.0
 		setZero(common);
 
 		// array that keeps the first summation in the denominators
-		double[] docSpecific = new double[pageCount];
+		ArrayList<Double> docSpecific = new ArrayList<Double>();
 		// set all positions to 0.0
 		setZero(docSpecific);
 
 		// variable for second summation in the denominator (scalar)
 		Double queryWeights = 0.0;
 		
+		// variable for WIQ calculation
+		double wiq = 0.0;
+		
+		// variable for TFIDF calculation
+		double wid = 0.0;
+		
+		// variables for highest sim value
+		String highestSimString = "";
+		double highestSimVal = 0.0;
+		
 		// create iterator
 		HashTableIterator iterator = new HashTableIterator(termIndex);		
 		
-		// traverse over the term index
+		// for each term i
 		while(iterator.hasNext()){
 
 			// get temp term
 			Term temp = iterator.next();
 
-			// variable for wiq
-			double wiq = 0;
-
-			// check if term is in query
+			// if the term is in the query
 			if(queryList.contains(temp.getName())){
 
-				// compute WIQ and square it
+				// compute WIQ, square it, and add it to queryWeights
 				wiq = WIQ(temp.getName());
-				wiq = wiq * wiq;
-
-				// add to queryWeights
-				queryWeights += wiq;
+				queryWeights += (wiq * wiq);
 
 			}
 
 			// get list of files that contain term 
 			ArrayList<String> docFileNames = temp.getListOfFileNames();
 
-			// go through list of files that contain term
-			for(int k = 0; k < docFileNames.size(); k++){
+			// for each document d that contains term i
+			for(int k = 0; k < temp.getDocFrequency(); k++){
 
 				// compute and square tfidf
-				double tfidf = TFIDF(docFileNames.get(k), temp.getName());
-				double tfidf2 = tfidf * tfidf;
+				wid = TFIDF(docFileNames.get(k), temp.getName());
+				double wid2 = wid * wid;
 
 				// find index of file in docs array
-				int index = indexOfArray(docs, docFileNames.get(k));
-				// add to value in docSpecific in position for doc d
-				docSpecific[index] += tfidf2;
+				int index = docs.indexOf(docFileNames.get(k));
+				// add to value in docSpecific in the position for doc d
+				double currentVal = docSpecific.get(index);
+				docSpecific.set(index, wid2+currentVal);
 
-				// if term is in both query and doc k
+				// if term is in both query and doc d
 				if(queryList.contains(temp.getName())){
 
 					// multiply wi,d and wi,q
-					double commonVal = tfidf * wiq;
+					double commonVal = wid * wiq;
 
 					// add to value in common array in position for doc k
-					common[index] += commonVal;
+					double currentVal1 = common.get(index);
+					common.set(index, currentVal1+commonVal);
 				}
 				
-				else{
-					common[index] += 0.0;
-				}
 			}
 			
 		}
 
-		// variables for highest sim value
-		String highestSimString = "";
-		double highestSimVal = 0.0;
+		// for each document d
+		for(int m = 0; m < docs.size(); m++){
 
-		// traverse over list of documents
-		for(int m = 0; m < docs.length; m++){
-
-			double sim = common[m]/(Math.sqrt(docSpecific[m]))*(Math.sqrt(queryWeights));
+			double sim = common.get(m)/((Math.sqrt(docSpecific.get(m)))*(Math.sqrt(queryWeights)));
 
 			// keep track of doc w/ highest sim value
 			if(sim >= highestSimVal){
 				highestSimVal = sim;
-				highestSimString = docs[m];
+				highestSimString = docs.get(m);
 			}
 		}
 		
+		
 		DecimalFormat fmt = new DecimalFormat("0.00");
 		
-		return " in " + highestSimString + ": " + fmt.format(highestSimVal);
+		if(queryWeights == 0){
+			return " not found in files";
+		}
+		
+		return listToString(queryList) + " in " + highestSimString + ": " + fmt.format(highestSimVal);
 
 	}
 
-
-//	public static void main(String[] args){
-//		
-//		ArrayList<String> testArray = new ArrayList<String>();
-//		
-//		testArray.add("JON");
-//		testArray.add("dog");
-//		
-//		String[] justArray = new String[testArray.size()];
-//		justArray = stringToArray(testArray);
-//		justArray = sortArray(justArray);
-//		
-//		for(int i = 0; i < justArray.length; i++){
-//			System.out.println(justArray[i]);
-//		}
-//	}
 
 
 

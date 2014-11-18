@@ -59,7 +59,7 @@ public class PA4 {
  			//best pages
 			for(int i = 0; i < queries.size(); i++){
 				String query = queries.get(i);
-				System.out.println("[" + query + " ]" + pages.bestPages(query));				
+				System.out.println(pages.bestPages(query));				
 			}
 
 			
