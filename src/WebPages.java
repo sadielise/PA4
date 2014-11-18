@@ -148,13 +148,19 @@ public class WebPages
 
 		// get the number of docs that contain word
 		int dfi = temp.getDocFrequency();
+		
+		double pc = (double)pageCount;
+		double df = (double)dfi;
 
-		return (.5)*(1 + Math.log(pageCount/dfi));
+		return (0.5)*(1.0 + Math.log(pc/df));
 	}
 
 	private String[] sortArray(String[] array){
 
-		for(int i = 0; i < array.length; i++){
+		for(int i = 0; i < array.length-1; i++){
+			
+			array[i].toLowerCase();
+			array[i+1].toLowerCase();
 
 			// if the item is greater than the one after it, swap
 			if(array[i].compareTo(array[i+1]) > 0){
@@ -174,14 +180,23 @@ public class WebPages
 		}
 	}
 	
-	private String[] stringToArray(ArrayList<String> list){
+	private static String[] stringToArray(ArrayList<String> list){
 		String[] retArray = new String[list.size()];
 		for(int i = 0; i < list.size(); i++){
-			retArray[0] = list.get(0);
+			retArray[i] = list.get(i);
 		}
 		return retArray;
 	}
 
+	private int indexOfArray(String[] array, String word){
+		int index = 0;
+		for(index = 0; index < array.length; index++){
+			if(array[index].equals(word))
+				return index;
+		}
+		
+		return -1;
+	}
 
 	/**
 	 * remove word from the hash table
@@ -235,17 +250,18 @@ public class WebPages
 			String s = scan.next();
 			queryList.add(s);
 		}
+		
+		scan.close();
 
 		// sort query list
-		String[] queryListArray = stringToArray(queryList);
+		String[] queryListArray = new String[queryList.size()];
+		queryListArray = stringToArray(queryList);
 		queryListArray = sortArray(queryListArray);
 
 		/* array that supports mapping b/w positions in the component
 		   arrays and which documents are being referenced */
-		String[] docs = new String[pageCount];
-		docs = (String[])fileNames.toArray();
-
-		// sort docs array
+		String[] docs = new String[fileNames.size()];
+		docs = stringToArray(fileNames);
 		docs = sortArray(docs);
 
 		// array that keeps the numerators
@@ -293,7 +309,7 @@ public class WebPages
 				double tfidf2 = tfidf * tfidf;
 
 				// find index of file in docs array
-				int index = fileNames.indexOf(docFileNames.get(k));
+				int index = indexOfArray(docs, docFileNames.get(k));
 				// add to value in docSpecific in position for doc d
 				docSpecific[index] += tfidf2;
 
@@ -332,7 +348,21 @@ public class WebPages
 	}
 
 
-
+//	public static void main(String[] args){
+//		
+//		ArrayList<String> testArray = new ArrayList<String>();
+//		
+//		testArray.add("JON");
+//		testArray.add("dog");
+//		
+//		String[] justArray = new String[testArray.size()];
+//		justArray = stringToArray(testArray);
+//		justArray = sortArray(justArray);
+//		
+//		for(int i = 0; i < justArray.length; i++){
+//			System.out.println(justArray[i]);
+//		}
+//	}
 
 
 

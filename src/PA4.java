@@ -48,6 +48,7 @@ public class PA4 {
 			// get queries
 			while(scan.hasNext()){
 				String line = scan.nextLine();
+				line = line.toLowerCase();
 				queries.add(line);
 			}
 			
@@ -57,7 +58,7 @@ public class PA4 {
 			
  			//best pages
 			for(int i = 0; i < queries.size(); i++){
-				String query = queries.get(0);
+				String query = queries.get(i);
 				System.out.print(query + pages.bestPages(query));				
 			}
 
