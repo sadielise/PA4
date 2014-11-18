@@ -43,6 +43,17 @@ public class PA4 {
 				tempString = scan.nextLine();
 			}
 			
+			// arraylist for queries
+			ArrayList<String> queries = new ArrayList<String>();
+			// int counter
+			int counter = 0;
+			// get queries
+			while(scan.hasNext()){
+				String line = scan.nextLine();
+				queries.set(0, line);
+				counter++;
+			}
+			
 			//print the terms
 			pages.printTerms();
 			

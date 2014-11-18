@@ -37,6 +37,11 @@ public class Term
 		totalFrequency = 0;
 	}
 	
+	// Getter for listOfFiles
+	public LinkedList<Occurrence> getListOfFiles(){
+		return listOfFiles;
+	}
+	
 	//Getter for name
 	public String getName() {
 		return name;

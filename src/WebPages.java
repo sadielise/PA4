@@ -6,15 +6,23 @@
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 public class WebPages 
 {
-	//Instance variable for binary search tree of Terms
+	//Instance variable for hash table of Terms
 	private HashTable termIndex;
-	
+
 	//instance variable for the number of pages read in
 	private int pageCount;
+
+	// variables for highest sim value
+	String highestSimString;
+	double highestSimVal = 0.0;
+
+	//instance variable for the names of pages read in
+	private ArrayList<String> fileNames = new ArrayList<String>();
 
 	//initializes a new index, a binary search tree of Term
 	public WebPages(int hashSize)
@@ -30,7 +38,10 @@ public class WebPages
 		{
 			//increment the pageCount
 			pageCount++;
-			
+
+			//add the file name to arraylist
+			fileNames.add(filename);
+
 			//read line-by-line through the file to get words
 			Scanner readFile = new Scanner(new File(filename));
 			while(readFile.hasNextLine())
@@ -65,7 +76,7 @@ public class WebPages
 		}
 
 	}
-	
+
 	public void printDepth(String word)
 	{
 		//get term depth in binary tree
@@ -110,32 +121,66 @@ public class WebPages
 	{
 		termIndex.add(document, word);
 	}
-	
+
 	//TFIDF method
-	public double TFIDF(String document, String word)
+	private double TFIDF(String document, String word)
 	{
 		//get the term for that word
 		Term term = termIndex.get(word, false);
-	
-		
+
+
 		float TF = (float) term.getTermFrequency(document);
 		//System.out.println("Word: " + word + " Document: " + document + " TF: " + TF);
 		float D = pageCount;
 		//System.out.println("Word: " + word + " Document: " + document + " D: " + D);
 		float DF = term.getDocFrequency();
 		//System.out.println("Word: " + word + " Document: " + document + " DF: " + DF);
-		
+
 		return TF * Math.log(D / DF);
 	}
-	
-	
+
+	// Wi,q method
+	private double WIQ(String word){
+
+		// get the term
+		Term temp = termIndex.get(word, false);
+
+		// get the number of docs that contain word
+		int dfi = temp.getDocFrequency();
+
+		return (.5)*(1 + Math.log(pageCount/dfi));
+	}
+
+	private String[] sortArray(String[] array){
+
+		for(int i = 0; i < array.length; i++){
+
+			// if the item is greater than the one after it, swap
+			if(array[i].compareTo(array[i+1]) > 0){
+				String temp = array[i];
+				array[i] = array[i+1];
+				array[i+1] = temp;
+			}
+		}
+
+		return array;
+	}
+
+	private void setZero(double[] array){
+
+		for(int i = 0; i < array.length; i++){
+			array[i] = 0.0;
+		}
+	}
+
+
 	/**
 	 * remove word from the hash table
 	 * @param word the word that needs to be removed from the hash table
 	 */
 	public void pruneStopWords(String word) {
 		termIndex.delete(word);
-		
+
 	}
 
 	//whichPages method
@@ -143,80 +188,147 @@ public class WebPages
 
 		//make a new term to compare to the term index
 		Term newTerm = new Term(word);
-		
+
 		//search through term index
 		if(termIndex.contains(newTerm)){
-			
+
 			//get the listOfFileNames for that term
 			ArrayList<String> arrayList = termIndex.get(word, false).getListOfFileNames();
-			
+
 			//copy array list to string array
 			String[] stringArray = new String[arrayList.size()];
 			for(int i = 0; i < arrayList.size(); i++){
 				stringArray[i] = arrayList.get(i);
 			}
-			
+
 			//return array
 			return stringArray;
-			
+
 		}
-		
+
 		else{
 			return null;
 		}
-		
+
 	}
 
 	// compute cosine similarity
 	public void bestPages(String query){
-		
+
 		// array list for individual terms in a query
 		ArrayList<String> queryList = new ArrayList<String>();
-		
+
 		// scanner to ready query
 		Scanner scan = new Scanner(query);
-		
+
 		// read each term of the query into the ArrayList
 		while(scan.hasNext()){
 			String s = scan.next();
 			queryList.add(s);
 		}
-		
-		// sort arrayList
-		for(int i = 0; i < queryList.size()-1; i++){
-			
-			// if the item is greater than the one after it, swap
-			if(queryList.get(i).compareTo(queryList.get(i+1)) > 0){
-				String temp = queryList.get(i);
-				queryList.set(i, queryList.get(i+1));
-				queryList.set(i+1, temp);
-			}
-		}
-		
+
+		// sort query list
+		String[] queryListArray = new String[queryList.size()];
+		queryListArray = (String[])queryList.toArray();
+		queryListArray = sortArray(queryListArray);
+
 		/* array that supports mapping b/w positions in the component
 		   arrays and which documents are being referenced */
 		String[] docs = new String[pageCount];
-		
+		docs = (String[])fileNames.toArray();
+
+		// sort docs array
+		docs = sortArray(docs);
+
 		// array that keeps the numerators
-		Double[] common = new Double[pageCount];
-		
+		double[] common = new double[pageCount];
+		// set all positions to 0.0
+		setZero(common);
+
 		// array that keeps the first summation in the denominators
-		Double[] docSpecific = new Double[pageCount];
-		
+		double[] docSpecific = new double[pageCount];
+		// set all positions to 0.0
+		setZero(docSpecific);
+
 		// variable for second summation in the denominator (scalar)
-		Double secondSum;
-		
-		
-		
-		
-		
-		
+		Double queryWeights = 0.0;
+
+		// traverse over the term index
+		for(int j = 0; j < termIndex.size(); j++){
+
+			// get temp term
+			Term temp = termIndex.get(j);
+
+			// variable for wiq
+			double wiq = 0;
+
+			// check if term is in query
+			if(queryList.contains(temp.getName())){
+
+				// compute WIQ and square it
+				wiq = WIQ(temp.getName());
+				wiq = wiq * wiq;
+
+				// add to queryWeights
+				queryWeights += wiq;
+
+			}
+
+			// get list of files that contain term 
+			ArrayList<String> docFileNames = temp.getListOfFileNames();
+
+			// go through list of files that contain term
+			for(int k = 0; k < docFileNames.size(); k++){
+
+				// compute and square tfidf
+				double tfidf = TFIDF(docFileNames.get(k), temp.getName());
+				double tfidf2 = tfidf * tfidf;
+
+				// find index of file in docs array
+				int index = fileNames.indexOf(docFileNames.get(k));
+				// add to value in docSpecific in position for doc d
+				docSpecific[index] += tfidf2;
+
+				// if term is in both query and doc k
+				if(queryList.contains(temp.getName())){
+
+					// multiply wi,d and wi,q
+					double commonVal = tfidf * wiq;
+
+					// add to value in common array in position for doc k
+					common[index] += commonVal;
+				}
+			}
+		}
+
+		// variables for highest sim value
+		String highestSimString;
+		double highestSimVal = 0.0;
+
+		// traverse over list of documents
+		for(int m = 0; m < docs.length; m++){
+
+			double sim = common[m]/(Math.sqrt(docSpecific[m]))*(Math.sqrt(queryWeights));
+
+			// keep track of doc w/ highest sim value
+			if(sim >= highestSimVal){
+				highestSimVal = sim;
+				highestSimString = docs[m];
+			}
+		}
+
 	}
-	
-	
+
 
 
 
 
 
 }
+
+
+
+
+
+
+

@@ -168,7 +168,7 @@ public class HashTable implements TermIndex{
 	 * @param word the name of the Term to be found
 	 * @return -1 if the word was not found or the position where the word is located
 	 */
-	private int find(String word){
+	protected int find(String word){
 		int positionsChecked = 0;
 		//compute the hash code
 		int hashCode = hashCode(word);
