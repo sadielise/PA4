@@ -181,7 +181,9 @@ public class HashTable implements TermIndex{
 		while(positionsChecked<hashSize){
 			//if the term is found return the location in the array 
 			if(termTable[probe] ==null){
-				//do nothing, the word has not been found
+				//if the position is null then the term is not in the table because
+				//to add the term the same probing process would have been used to add it
+				return -1;
 			}
 			else if(termTable[probe].getName().equals(word)){
 				return probe;
@@ -235,56 +237,56 @@ public class HashTable implements TermIndex{
 	 * Testing the methods
 	 * @param args
 	 */
-	public static void main(String[] args){
-		HashTable testing = new HashTable(5);
-		//test add
-		testing.add("docs", "newWord");
-		testing.add("doc", "newWord");
-		testing.add("document", "word");
-		testing.add("doc", "words");
-		testing.add("doc", "Gabriella");
-		testing.add("d", "g");
-
-		//test get
-		Term test = testing.get("Gabriella", false);
-		if(test!=null) System.out.println("Testing get: " + test.getName());
-
-		
-		//print terms to test iterator
-		String outputString = "";
-		HashTableIterator itr = new HashTableIterator(testing);
-		while(itr.hasNext())
-		{
-			outputString += ((itr.next()).getName() + "\n");
-		}	
-		System.out.println(outputString);
-		
-		//test delete
-		testing.delete("Gabriella");
-		testing.delete("word");
-		HashTableIterator itr2 = new HashTableIterator(testing);
-		outputString = "";
-		while(itr2.hasNext())
-		{
-			outputString += ((itr2.next()).getName() + "\n");
-		}
-		System.out.println(outputString);
-		testing.add("doc", "Gabriella");
-		
-		HashTableIterator itr3 = new HashTableIterator(testing);
-		outputString = "";
-		while(itr3.hasNext())
-		{
-			outputString += ((itr3.next()).getName() + "\n");
-		}
-		System.out.println(outputString);
-		
-		Term tempTerm = new Term("gas");
-		boolean testcontain = testing.contains(tempTerm);
-		if(testcontain == true){
-			System.out.println("true");
-		}
-
-	}
+//	public static void main(String[] args){
+//		HashTable testing = new HashTable(5);
+//		//test add
+//		testing.add("docs", "newWord");
+//		testing.add("doc", "newWord");
+//		testing.add("document", "word");
+//		testing.add("doc", "words");
+//		testing.add("doc", "Gabriella");
+//		testing.add("d", "g");
+//
+//		//test get
+//		Term test = testing.get("jkdlsa", false);
+//		if(test!=null) System.out.println("Testing get: " + test.getName());
+//
+//		
+//		//print terms to test iterator
+//		String outputString = "";
+//		HashTableIterator itr = new HashTableIterator(testing);
+//		while(itr.hasNext())
+//		{
+//			outputString += ((itr.next()).getName() + "\n");
+//		}	
+//		System.out.println(outputString);
+//		
+//		//test delete
+//		testing.delete("Gabriella");
+//		testing.delete("word");
+//		HashTableIterator itr2 = new HashTableIterator(testing);
+//		outputString = "";
+//		while(itr2.hasNext())
+//		{
+//			outputString += ((itr2.next()).getName() + "\n");
+//		}
+//		System.out.println(outputString);
+//		testing.add("doc", "Gabriella");
+//		
+//		HashTableIterator itr3 = new HashTableIterator(testing);
+//		outputString = "";
+//		while(itr3.hasNext())
+//		{
+//			outputString += ((itr3.next()).getName() + "\n");
+//		}
+//		System.out.println(outputString);
+//		
+//		Term tempTerm = new Term("gas");
+//		boolean testcontain = testing.contains(tempTerm);
+//		if(testcontain == true){
+//			System.out.println("true");
+//		}
+//
+//	}
 
 }
