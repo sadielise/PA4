@@ -5,6 +5,7 @@
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Scanner;
@@ -172,6 +173,14 @@ public class WebPages
 			array[i] = 0.0;
 		}
 	}
+	
+	private String[] stringToArray(ArrayList<String> list){
+		String[] retArray = new String[list.size()];
+		for(int i = 0; i < list.size(); i++){
+			retArray[0] = list.get(0);
+		}
+		return retArray;
+	}
 
 
 	/**
@@ -213,7 +222,7 @@ public class WebPages
 	}
 
 	// compute cosine similarity
-	public void bestPages(String query){
+	public String bestPages(String query){
 
 		// array list for individual terms in a query
 		ArrayList<String> queryList = new ArrayList<String>();
@@ -228,8 +237,7 @@ public class WebPages
 		}
 
 		// sort query list
-		String[] queryListArray = new String[queryList.size()];
-		queryListArray = (String[])queryList.toArray();
+		String[] queryListArray = stringToArray(queryList);
 		queryListArray = sortArray(queryListArray);
 
 		/* array that supports mapping b/w positions in the component
@@ -302,7 +310,7 @@ public class WebPages
 		}
 
 		// variables for highest sim value
-		String highestSimString;
+		String highestSimString = "";
 		double highestSimVal = 0.0;
 
 		// traverse over list of documents
@@ -316,6 +324,10 @@ public class WebPages
 				highestSimString = docs[m];
 			}
 		}
+		
+		DecimalFormat fmt = new DecimalFormat("0.00");
+		
+		return " in " + highestSimString + ": " + fmt.format(highestSimVal);
 
 	}
 

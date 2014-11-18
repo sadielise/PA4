@@ -45,34 +45,23 @@ public class PA4 {
 			
 			// arraylist for queries
 			ArrayList<String> queries = new ArrayList<String>();
-			// int counter
-			int counter = 0;
 			// get queries
 			while(scan.hasNext()){
 				String line = scan.nextLine();
-				queries.set(0, line);
-				counter++;
+				queries.add(line);
 			}
 			
 			//print the terms
 			pages.printTerms();
 			
 			
- 			//best pages!!
-			String[] docs;
-
-			while(scan.hasNext()){
-				String word = scan.nextLine();
-				docs = pages.whichPages(word.toLowerCase());
-				if(docs==null){
-					System.out.println(word + " not found");
-				}
-				else{
-					String documents =  Arrays.toString(docs);
-					System.out.println(word + " in pages: " +documents.substring(1, documents.length()-1));
-				}
-
+ 			//best pages
+			for(int i = 0; i < queries.size(); i++){
+				String query = queries.get(0);
+				System.out.print(query + pages.bestPages(query));				
 			}
+
+			
 			scan.close();
 		} catch (Exception e) {
 			System.out.println("Error: " + e);
